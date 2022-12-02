@@ -40,13 +40,9 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // ROUTES WITH FILE UPLOAD
-app.post("/api/v1/auth/register",upload.single("picture"),register)
-
+app.post("/api/v1/auth/register", upload.single("picture"), register);
 
 // ROUTES
-app.use("/", (req, res) => {
-  res.send("hello there!!");
-});
 app.use("/api/v1/auth", authRouter);
 
 // CONNECTING TO MONGODB

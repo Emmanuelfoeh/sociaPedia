@@ -37,3 +37,26 @@ export const register = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+
+// Login User function
+export const login = async (req, res) => {
+try {
+
+    const {email, password} = req.body;
+    const user = await User.findOne({email:email})
+    if(!user) return res.status(401).json({ error:`No such user in the system` });
+    const isMatch = await bcrypt.compare(password,user.password)
+    if(!isMatch) return res.status(401).json({ error:"Invalid Credentials"})
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+
+     user.password = undefined;
+    // delete user.password
+
+    res.status(200).json({status: "success",user,token});
+
+} catch (error) {
+     res.status(500).json({ error: err.message });
+}
+}
