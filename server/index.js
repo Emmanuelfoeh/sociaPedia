@@ -10,7 +10,15 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 import authRouter from "./routes/authRoute.js";
+import userRouter from "./routes/userRoutes.js";
+import postRouter from "./routes/postRoutes.js"
+import authUser from "./middleware/auth.js"
 import { register } from "./controllers/auth.js";
+import { createPost } from "./controllers/postController.js";
+
+import User from "./models/User.js";
+import Post from "./models/Post.js";
+import { users, posts } from "./data/index.js";
 
 // CONFIGURATIONS
 const __filename = fileURLToPath(import.meta.url);
@@ -41,9 +49,12 @@ const upload = multer({ storage });
 
 // ROUTES WITH FILE UPLOAD
 app.post("/api/v1/auth/register", upload.single("picture"), register);
+app.post("/api/v1/createPost",authUser, upload.single("picture"), createPost);
 
 // ROUTES
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/users",userRouter)
+app.use("/api/v1/posts",postRouter)
 
 // CONNECTING TO MONGODB
 const PORT = process.env.PORT || 6001;
@@ -58,5 +69,9 @@ mongoose
         `Database connection established, Server listening on ${PORT}`
       )
     );
+    /* ADD DATA ONE TIME */
+
+    // User.insertMany(users);
+    // Post.insertMany(posts);
   })
   .catch((err) => console.log(`${err} did not connect to Mongo`));
